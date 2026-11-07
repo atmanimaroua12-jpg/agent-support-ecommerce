@@ -1,0 +1,24 @@
+# Environnement virtuel
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets (ne jamais committer)
+.env
+
+# Outils
+.pytest_cache/
+.ruff_cache/
+
+# MLflow (expériences locales)
+mlruns/
+mlflow.db
+
+# Fichiers générés à l'exécution
+runtime/
+artifacts/
+
+# macOS
+.DS_Store

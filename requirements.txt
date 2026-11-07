@@ -1,0 +1,22 @@
+# LLM
+groq==0.31.0
+# Validation des arguments des outils
+pydantic==2.11.7
+# RAG (TF-IDF)
+scikit-learn==1.7.1
+# API et interface
+fastapi==0.116.1
+uvicorn==0.35.0
+streamlit==1.48.0
+httpx==0.28.1
+# MLOps
+mlflow==3.2.0
+dvc==3.61.0
+# Utilitaires
+pyyaml==6.0.2
+python-dotenv==1.1.1
+pandas==2.3.1
+# Qualité
+pytest==8.4.1
+pytest-cov==6.2.1
+ruff==0.12.7

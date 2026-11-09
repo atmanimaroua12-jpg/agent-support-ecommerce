@@ -12,6 +12,7 @@ httpx==0.28.1
 # MLOps
 mlflow==3.2.0
 dvc==3.61.0
+pathspec==0.12.1
 # Utilitaires
 pyyaml==6.0.2
 python-dotenv==1.1.1

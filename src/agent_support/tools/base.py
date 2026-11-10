@@ -55,6 +55,27 @@ class ToolResult:
         return {"status": self.status, "error_code": self.error_code, "message": self.error}
 
 
+def simplify_schema(schema: dict) -> dict:
+    """Rend le schéma pydantic plus simple pour le LLM : pas de $ref, pas de « type ou null »."""
+    defs = schema.pop("$defs", {})
+
+    def walk(node):
+        if isinstance(node, list):
+            return [walk(item) for item in node]
+        if not isinstance(node, dict):
+            return node
+        if "$ref" in node:  # remplace la référence par sa définition (ex. la liste des catégories)
+            node = {**defs[node["$ref"].split("/")[-1]], **{k: v for k, v in node.items() if k != "$ref"}}
+        if "anyOf" in node:  # champ facultatif « texte ou null » -> simplement « texte », non obligatoire
+            options = [o for o in node["anyOf"] if o.get("type") != "null"]
+            if len(options) == 1:
+                node = {**options[0], **{k: v for k, v in node.items() if k != "anyOf"}}
+        node = {k: v for k, v in node.items() if k != "title" and not (k == "default" and v is None)}
+        return {k: walk(v) for k, v in node.items()}
+
+    return walk(schema)
+
+
 class ToolRegistry:
     def __init__(self, tools: list[Tool]):
         self.tools = {tool.name: tool for tool in tools}
@@ -63,8 +84,7 @@ class ToolRegistry:
         """Description des outils au format attendu par l'API Groq (format OpenAI)."""
         out = []
         for tool in self.tools.values():
-            params = tool.args_model.model_json_schema()
-            params.pop("title", None)
+            params = simplify_schema(tool.args_model.model_json_schema())
             out.append({"type": "function",
                         "function": {"name": tool.name, "description": tool.description, "parameters": params}})
         return out

@@ -43,6 +43,14 @@ def test_trois_outils_avec_schemas(registry):
     assert noms == {"search_docs", "get_order_status", "create_ticket"}
 
 
+def test_schema_simplifie_pour_le_llm(registry):
+    ticket = next(s for s in registry.schemas() if s["function"]["name"] == "create_ticket")
+    params = ticket["function"]["parameters"]
+    assert "$defs" not in params and "anyOf" not in str(params)
+    assert "colis_endommage" in params["properties"]["category"]["enum"]
+    assert params["required"] == ["category", "summary"]
+
+
 def test_outil_inconnu(registry, cfg, index, tickets):
     result = run(registry, cfg, context(cfg, index, tickets), "rembourser_client", {})
     assert result.status == "unknown_tool"

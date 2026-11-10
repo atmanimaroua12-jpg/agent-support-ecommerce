@@ -5,6 +5,7 @@ llm:
   temperature: 0.0
   max_tokens: 1024
   timeout_s: 30
+  reasoning_effort: low 
 
 agent:
   prompt_version: v2

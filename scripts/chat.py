@@ -24,6 +24,8 @@ while True:
         print(f"   ⚠️ Erreur LLM : {r.error}")
     if r.draft:
         print(f"   📝 Brouillon {r.draft['draft_id']} en attente de confirmation (bouton de l'interface, étape 7)")
+    if r.blocked_reason:
+        print(f"   🛡 Bloquée par les garde-fous : {r.blocked_reason}")
     print(f"   ⏱ {r.latency_ms:.0f} ms | {r.iterations} tour(s) | {r.input_tokens}+{r.output_tokens} tokens"
-          f" | issue : {r.outcome}\n")
+          f" | {r.cost_usd:.6f} $ | issue : {r.outcome}\n")
     history += [{"role": "user", "content": question}, {"role": "assistant", "content": r.answer}]

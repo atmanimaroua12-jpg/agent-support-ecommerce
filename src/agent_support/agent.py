@@ -1,15 +1,19 @@
 """Orchestrateur : la boucle LLM <-> outils, avec ses limites et sa gestion des erreurs."""
 import json
 import time
+import uuid
 from dataclasses import dataclass, field
 
 from .config import project_path
+from .guardrails import REFUSALS, check_input
 from .llm.base import LLMError
 from .prompts import get_system_prompt
 from .rag import RagIndex, load_chunks
 from .tools.base import ToolContext, ToolResult
 from .tools.catalog import build_registry
 from .tools.ticket_store import TicketStore
+from .tracing import Tracer, build_trace, estimate_cost
+from .versioning import version_info
 
 FALLBACK = ("Désolé, je n'ai pas pu traiter votre demande. "
             "Je peux transmettre votre question à un conseiller humain si vous le souhaitez.")
@@ -27,7 +31,9 @@ class ToolCallRecord:
 @dataclass
 class AgentResponse:
     answer: str
-    outcome: str                   # completed | llm_error | max_iterations
+    outcome: str                   # completed | blocked | llm_error | max_iterations
+    request_id: str = ""
+    blocked_reason: str | None = None
     tool_calls: list[ToolCallRecord] = field(default_factory=list)
     sources: list[str] = field(default_factory=list)
     draft: dict | None = None      # brouillon de ticket à faire confirmer par le client
@@ -35,24 +41,43 @@ class AgentResponse:
     iterations: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
+    cost_usd: float = 0.0
     latency_ms: float = 0.0
 
 
 class Agent:
-    def __init__(self, cfg: dict, llm, registry, services: dict):
+    def __init__(self, cfg: dict, llm, registry, services: dict, tracer: Tracer | None = None,
+                 version: dict | None = None):
         self.cfg = cfg
         self.llm = llm
         self.registry = registry
         self.services = services
+        self.tracer = tracer or Tracer(None)
+        self.version = version or {}
         self.system_prompt = get_system_prompt(cfg["agent"]["prompt_version"])
 
     def run(self, question: str, customer_id: str | None, history: list[dict] | None = None) -> AgentResponse:
         start = time.perf_counter()
+        resp = AgentResponse(answer=FALLBACK, outcome="max_iterations", request_id=uuid.uuid4().hex[:12])
+
+        check = check_input(question, self.cfg["agent"]["max_input_chars"])
+        if check.allowed:
+            self._loop(question, customer_id, history, resp)
+        else:  # bloquée AVANT le LLM : aucun token consommé
+            resp.outcome, resp.blocked_reason, resp.answer = "blocked", check.reason, REFUSALS[check.reason]
+
+        resp.cost_usd = estimate_cost(self.cfg["llm"], resp.input_tokens, resp.output_tokens)
+        resp.latency_ms = round((time.perf_counter() - start) * 1000, 1)
+        meta = {**self.version, "model": self.cfg["llm"]["model"],
+                "prompt_version": self.cfg["agent"]["prompt_version"]}
+        self.tracer.write(build_trace(resp.request_id, question, customer_id, resp, meta))
+        return resp
+
+    def _loop(self, question: str, customer_id: str | None, history: list[dict] | None, resp: AgentResponse):
         limits = self.cfg["agent"]
         ctx = ToolContext(customer_id=customer_id, cfg=self.cfg, services=self.services)
         messages = [{"role": "system", "content": self.system_prompt}, *(history or []),
                     {"role": "user", "content": question}]
-        resp = AgentResponse(answer=FALLBACK, outcome="max_iterations")
         failed_calls = set()  # appels déjà échoués : on n'autorise pas le LLM à les répéter en boucle
 
         for _ in range(limits["max_iterations"]):
@@ -88,9 +113,6 @@ class Agent:
                 messages.append({"role": "tool", "tool_call_id": call.id,
                                  "content": json.dumps(result.for_llm(), ensure_ascii=False)})
 
-        resp.latency_ms = round((time.perf_counter() - start) * 1000, 1)
-        return resp
-
     def _run_tool(self, call, ctx, n_calls: int, failed_calls: set) -> tuple[ToolResult, dict | str]:
         if n_calls >= self.cfg["agent"]["max_tool_calls"]:
             return ToolResult("error", error_code="TOOL_LIMIT", error="trop d'appels d'outils"), call.arguments
@@ -108,9 +130,10 @@ class Agent:
         return result, args
 
 
-def build_agent(cfg: dict, llm=None) -> Agent:
-    """Assemble l'agent : index RAG, stockage des tickets, registre d'outils et LLM."""
-    chunks, _ = load_chunks(project_path(cfg["paths"]["corpus"]))
+def build_agent(cfg: dict, llm=None, trace_path=None) -> Agent:
+    """Assemble l'agent : index RAG, stockage des tickets, registre d'outils, traces et LLM."""
+    corpus_dir = project_path(cfg["paths"]["corpus"])
+    chunks, _ = load_chunks(corpus_dir)
     services = {
         "index": RagIndex(chunks),
         "tickets": TicketStore(project_path(cfg["paths"]["pending_tickets"]), project_path(cfg["paths"]["tickets"])),
@@ -118,4 +141,5 @@ def build_agent(cfg: dict, llm=None) -> Agent:
     if llm is None:
         from .llm.groq_client import GroqClient
         llm = GroqClient(cfg["llm"])
-    return Agent(cfg, llm, build_registry(), services)
+    tracer = Tracer(trace_path if trace_path is not None else project_path(cfg["paths"]["traces"]))
+    return Agent(cfg, llm, build_registry(), services, tracer, version_info(cfg, corpus_dir))

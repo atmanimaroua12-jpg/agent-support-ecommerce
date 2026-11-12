@@ -1,0 +1,20 @@
+# Questions annotées pour évaluer UNIQUEMENT la recherche documentaire (sans LLM).
+# expected = "doc_id | section" du passage qui contient la réponse.
+- {question: "Combien de jours pour retourner un article ?", expected: "POL-RET | Délai de retour"}
+- {question: "Quels articles ne peuvent pas être retournés ?", expected: "POL-RET | Conditions d'acceptation"}
+- {question: "Comment faire une demande de retour ?", expected: "POL-RET | Procédure de retour"}
+- {question: "Le retour est-il gratuit si je change d'avis ?", expected: "POL-RET | Frais de retour"}
+- {question: "Quand serai-je remboursé ?", expected: "POL-RET | Remboursement"}
+- {question: "Puis-je échanger contre une autre taille ?", expected: "POL-RET | Échange"}
+- {question: "Quels sont les délais de livraison à Fès ?", expected: "GUI-LIV | Zones et délais de livraison"}
+- {question: "Combien coûte la livraison express ?", expected: "GUI-LIV | Livraison express"}
+- {question: "À partir de quel montant la livraison est-elle gratuite ?", expected: "GUI-LIV | Frais de livraison"}
+- {question: "Que faire si ma commande est en retard ?", expected: "GUI-LIV | Retard de livraison"}
+- {question: "Mon colis est arrivé abîmé, que faire ?", expected: "GUI-LIV | Colis endommagé ou incomplet"}
+- {question: "Quelle est la durée de la garantie ?", expected: "POL-GAR | Durée de la garantie"}
+- {question: "La garantie couvre-t-elle la casse ou l'eau ?", expected: "POL-GAR | Exclusions"}
+- {question: "Comment faire jouer la garantie ?", expected: "POL-GAR | Mise en œuvre de la garantie"}
+- {question: "Puis-je payer à la livraison ?", expected: "FAQ-GEN | Quels moyens de paiement acceptez-vous ?"}
+- {question: "Comment annuler ma commande ?", expected: "FAQ-GEN | Puis-je modifier ou annuler ma commande ?"}
+- {question: "Comment obtenir une facture ?", expected: "FAQ-GEN | Comment obtenir une facture ?"}
+- {question: "Quels sont les horaires du service client ?", expected: "FAQ-GEN | Comment contacter le service client ?"}

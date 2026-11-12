@@ -11,6 +11,7 @@ streamlit==1.48.0
 httpx==0.28.1
 # MLOps
 mlflow==3.2.0
+sqlalchemy>=2.0,<2.1   # mlflow 3.2 est incompatible avec sqlalchemy 2.1
 dvc==3.61.0
 pathspec==0.12.1
 # Utilitaires

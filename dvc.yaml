@@ -1,0 +1,13 @@
+# Pipeline DVC : `dvc repro` relance une étape seulement si l'une de ses dépendances a changé.
+stages:
+  evaluate_retrieval:
+    cmd: python scripts/eval_retrieval.py
+    deps:
+      - data/corpus
+      - eval/retrieval_questions.yaml
+      - src/agent_support/rag.py
+      - src/agent_support/evaluation.py
+      - scripts/eval_retrieval.py
+    metrics:
+      - reports/retrieval_metrics.json:
+          cache: false

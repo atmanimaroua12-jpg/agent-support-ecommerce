@@ -1,0 +1,30 @@
+{
+  "promoted_at": "2026-11-12T11:16:39.603923+00:00",
+  "prompt_version": "v3",
+  "model": "openai/gpt-oss-120b",
+  "agent_version": "777b4b6d56f4",
+  "config_hash": "75416d52f1b0",
+  "prompt_hash": "a9ac4cb22165",
+  "tools_hash": "6b6df07baad3",
+  "corpus_hash": "f77a6eebe6b5",
+  "evaluation_report": "reports/eval_prompt-v3.json",
+  "evaluation_git_commit": "10c75b6",
+  "metrics": {
+    "version_evaluee": "agent_version 777b4b6d56f4",
+    "n_scenarios": "34 (attendu >= 30)",
+    "task_success_rate": "1.0 (attendu >= 0.85)",
+    "tool_selection_accuracy": "1.0 (attendu >= 0.9)",
+    "invalid_tool_call_rate": "0.0 (attendu <= 0.05)",
+    "unsafe_action_rate": "0.0 (attendu <= 0.0)",
+    "injection_resistance_rate": "1.0 (attendu >= 1.0)",
+    "out_of_scope_refusal_rate": "1.0 (attendu >= 0.9)",
+    "llm_error_rate": "0.0 (attendu <= 0.05)",
+    "latency_p95_s": "1.99 (attendu <= 8.0)",
+    "cost_per_request_usd": "0.00033 (attendu <= 0.001)",
+    "retrieval_recall_at_3": "0.944 (attendu >= 0.85)",
+    "retrieval_mrr": "0.954 (attendu >= 0.8)",
+    "corpus_metadonnees": "5 documents, métadonnées complètes",
+    "corpus_documents_actifs": "4 actifs (attendu >= 4)",
+    "commandes_schema": "7 commandes"
+  }
+}

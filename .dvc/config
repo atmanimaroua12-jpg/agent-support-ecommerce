@@ -1,4 +1,6 @@
 [core]
-    remote = localremote
+    remote = repo-remote
 ['remote "localremote"']
     url = /Users/macbook/dvc-storage
+['remote "repo-remote"']
+    url = ../dvc-remote

@@ -1,0 +1,31 @@
+schema: '2.0'
+stages:
+  evaluate_retrieval:
+    cmd: python scripts/eval_retrieval.py
+    deps:
+    - path: data/corpus
+      hash: md5
+      md5: d080546d05e1d4268f1bbe54e65bab31.dir
+      size: 6085
+      nfiles: 5
+    - path: eval/retrieval_questions.yaml
+      hash: md5
+      md5: 4d575ede435e9629768904365701abd4
+      size: 2020
+    - path: scripts/eval_retrieval.py
+      hash: md5
+      md5: f7905f1e19aaab240262c9841b36da87
+      size: 1094
+    - path: src/agent_support/evaluation.py
+      hash: md5
+      md5: 4609971d1cc1634c2386914bce968ebf
+      size: 6478
+    - path: src/agent_support/rag.py
+      hash: md5
+      md5: 044eff0778349f328a684cf0788ef2d4
+      size: 4750
+    outs:
+    - path: reports/retrieval_metrics.json
+      hash: md5
+      md5: 9b63a7af220f1197be9146edfff23196
+      size: 195

@@ -1,0 +1,9 @@
+{
+  "retrieval_recall_at_1": 0.944,
+  "retrieval_mrr": 0.954,
+  "retrieval_recall_at_3": 0.944,
+  "n_questions": 18,
+  "n_chunks": 21,
+  "n_documents_actifs": 4,
+  "corpus_hash": "f77a6eebe6b5"
+}

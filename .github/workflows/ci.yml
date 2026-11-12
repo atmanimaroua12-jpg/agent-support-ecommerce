@@ -1,0 +1,48 @@
+# Intégration continue : à chaque push et pull request, on vérifie que le projet reste correct.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Récupérer les données versionnées (DVC)
+        run: dvc pull
+
+      - name: Lint (ruff)
+        run: ruff check src tests scripts app eval
+
+      - name: Recherche de secrets (clé API Groq)
+        run: |
+          if git grep -nE "gsk_[A-Za-z0-9]{20,}"; then
+            echo "::error::Une clé API Groq a été committée !"
+            exit 1
+          fi
+
+      - name: Tests unitaires, d'intégration et de bout en bout
+        run: pytest -q --cov=agent_support --cov-report=term
+
+      - name: Pipeline DVC (évaluation du retrieval)
+        run: dvc repro && dvc metrics show
+
+      - name: Quality gates
+        run: python scripts/quality_gate.py --report reports/eval_prompt-v3.json
+
+      - name: Audit de sécurité des dépendances
+        run: pip install pip-audit && pip-audit -r requirements.txt
+        continue-on-error: true   # informatif : une faille connue est signalée sans bloquer

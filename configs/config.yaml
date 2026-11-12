@@ -11,7 +11,7 @@ llm:
     output: 0.60
 
 agent:
-  prompt_version: v2
+  prompt_version: v3
   max_iterations: 5        # nombre max d'allers-retours LLM -> outils par question
   max_tool_calls: 6        # nombre max d'appels d'outils par question
   max_input_chars: 1500    # question plus longue -> refus

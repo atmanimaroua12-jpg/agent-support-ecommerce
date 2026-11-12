@@ -1,0 +1,21 @@
+{
+    "_meta": {
+      "description": "Base de commandes FICTIVES pour la simulation. Aucune donnée réelle.",
+      "version": "1.0",
+      "date": "2026-11-01"
+    },
+    "customers": {
+      "C001": {"name": "Salma Bennani", "email": "salma.bennani@example.ma"},
+      "C002": {"name": "Youssef El Idrissi", "email": "youssef.idrissi@example.ma"},
+      "C003": {"name": "Imane Tazi", "email": "imane.tazi@example.ma"}
+    },
+    "orders": {
+      "CMD-10001": {"customer_id": "C001", "status": "livrée", "order_date": "2026-10-02", "estimated_delivery": "2026-10-06", "delivered_on": "2026-10-05", "total_mad": 899.0, "payment": "carte", "carrier": "Amana", "tracking": "AM123456789MA", "items": [{"sku": "EAR-200", "name": "Casque Bluetooth NovaSound", "qty": 1, "price_mad": 899.0}]},
+      "CMD-10002": {"customer_id": "C001", "status": "en cours de livraison", "order_date": "2026-11-03", "estimated_delivery": "2026-11-07", "delivered_on": null, "total_mad": 249.0, "payment": "paiement à la livraison", "carrier": "Amana", "tracking": "AM987654321MA", "items": [{"sku": "CAB-010", "name": "Câble USB-C 2 m", "qty": 2, "price_mad": 59.0}, {"sku": "COQ-031", "name": "Coque antichoc", "qty": 1, "price_mad": 131.0}]},
+      "CMD-10003": {"customer_id": "C002", "status": "en préparation", "order_date": "2026-11-06", "estimated_delivery": "2026-11-10", "delivered_on": null, "total_mad": 3499.0, "payment": "carte", "carrier": null, "tracking": null, "items": [{"sku": "TV-43", "name": "Téléviseur 43 pouces", "qty": 1, "price_mad": 3499.0}]},
+      "CMD-10004": {"customer_id": "C002", "status": "expédiée", "order_date": "2026-10-28", "estimated_delivery": "2026-10-31", "delivered_on": null, "total_mad": 560.0, "payment": "carte", "carrier": "CTM Messagerie", "tracking": "CTM55501", "items": [{"sku": "MIX-500", "name": "Blender 500 W", "qty": 1, "price_mad": 560.0}]},
+      "CMD-10005": {"customer_id": "C003", "status": "annulée", "order_date": "2026-10-20", "estimated_delivery": null, "delivered_on": null, "total_mad": 129.0, "payment": "carte", "carrier": null, "tracking": null, "items": [{"sku": "LMP-07", "name": "Lampe de bureau LED", "qty": 1, "price_mad": 129.0}]},
+      "CMD-10006": {"customer_id": "C003", "status": "livrée", "order_date": "2026-08-10", "estimated_delivery": "2026-08-14", "delivered_on": "2026-08-13", "total_mad": 2199.0, "payment": "carte", "carrier": "Amana", "tracking": "AM111222333MA", "items": [{"sku": "PHN-A5", "name": "Smartphone Nova A5", "qty": 1, "price_mad": 2199.0}]},
+      "CMD-10009": {"customer_id": "C001", "status": "expédiée", "order_date": "2026-11-01", "estimated_delivery": "2026-11-05", "delivered_on": null, "total_mad": 75.0, "payment": "carte", "carrier": "Amana", "tracking": "AM000111222MA", "items": [{"sku": "CHG-20", "name": "Chargeur 20 W", "qty": 1, "price_mad": 75.0}], "_simulate": "timeout"}
+    }
+  }
